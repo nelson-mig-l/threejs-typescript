@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+        "module": "amd",
+        "target": "es6",
+        "sourceMap": true,
+        "outDir": "dist",
+        "types": [
+            "requirejs",
+            "three"
+        ],
+        "lib": [
+            "es6",
+            "dom"
+        ],
+        "moduleResolution": "node"
+    },
+    "exclude": [
+        "node_modules",
+        "libs"
+    ],
+    "include": [
+        "src"
+    ]
+}
