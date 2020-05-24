@@ -4,25 +4,35 @@ define(["require", "exports", "three", "three-orbitcontrols-ts"], function (requ
     exports.Scene = void 0;
     class Scene {
         constructor() {
-            this._camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
-            this._scene = new THREE.Scene();
+            let camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10);
+            let renderer = new THREE.WebGLRenderer({ antialias: true });
+            // Handle window resize
+            function onWindowResize() {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+            window.addEventListener('resize', onWindowResize, false);
+            // Make something visible
             let geometry = new THREE.BoxGeometry(0.2, 0.2, 0.2);
             let material = new THREE.MeshNormalMaterial();
-            this._mesh = new THREE.Mesh(geometry, material);
-            this._controls = new three_orbitcontrols_ts_1.OrbitControls(this._camera);
-            this._renderer = new THREE.WebGLRenderer({ antialias: true });
+            this.mesh = new THREE.Mesh(geometry, material);
+            this.camera = camera;
+            this.renderer = renderer;
+            this.scene = new THREE.Scene();
+            this.controls = new three_orbitcontrols_ts_1.OrbitControls(camera);
+        }
+        initialize() {
+            this.camera.position.z = 1;
+            this.scene.add(this.mesh);
+            this.renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(this.renderer.domElement);
         }
         animate() {
             requestAnimationFrame(() => this.animate());
-            this._mesh.rotation.x += 0.01;
-            this._mesh.rotation.y += 0.01;
-            this._renderer.render(this._scene, this._camera);
-        }
-        initialize() {
-            this._camera.position.z = 1;
-            this._scene.add(this._mesh);
-            this._renderer.setSize(window.innerWidth, window.innerHeight);
-            document.body.appendChild(this._renderer.domElement);
+            this.mesh.rotation.x += 0.01;
+            this.mesh.rotation.y += 0.01;
+            this.renderer.render(this.scene, this.camera);
         }
     }
     exports.Scene = Scene;
