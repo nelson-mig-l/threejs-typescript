@@ -72,25 +72,45 @@ define(["require", "exports", "three"], function (require, exports, THREE) {
     const XSIZE = mapx[0].length * VERTICAL_UNIT;
     class Map {
         constructor(scene) {
-            this.map = mapx;
             this.scene = scene;
-            let rows = this.map.length;
-            let cols = this.map[0].length;
-            for (let i = 0; i < rows; i++) {
-                for (let j = 0; j < cols; j++) {
-                    this.voxel(this.map[i].charAt(j), i, j);
+            // https://threejs.org/docs/#api/en/loaders/FileLoader
+            var loader = new THREE.FileLoader();
+            var scope = this;
+            loader.load('dist/maps/pacman.txt', function (data) {
+                console.log(data);
+                scope.map = data.split("\r\n");
+                let rows = scope.map.length;
+                let cols = scope.map[0].length;
+                for (let i = 0; i < rows; i++) {
+                    console.log(scope.map[i]);
+                    for (let j = 0; j < cols; j++) {
+                        scope.voxel(scope.map[i].charAt(j), i, j);
+                    }
                 }
-            }
+            }, function (xhr) {
+                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+            }, function (err) {
+                console.error('An error happened');
+            });
+            console.log("no >>>>>");
+            // let rows: number = this.map.length;
+            // let cols: number = this.map[0].length;
+            // for (let i = 0; i < rows; i++) {
+            //     for (let j = 0; j < cols; j++) {
+            //         this.voxel(this.map[i].charAt(j), i, j);
+            //     }
+            // }
+            // console.log("< no");
         }
         voxel(type, row, col) {
             let z = (row + 1) * HORIZONTAL_UNIT - ZSIZE * 0.5;
             let x = (col + 1) * HORIZONTAL_UNIT - XSIZE * 0.5;
             switch (type) {
                 case 'S':
-                    console.log('s');
+                    //console.log('s');
                     break;
                 case 'X':
-                    console.log('x');
+                    //console.log('x');
                     let geo = new THREE.BoxGeometry(HORIZONTAL_UNIT, VERTICAL_UNIT, HORIZONTAL_UNIT);
                     let material = new THREE.MeshNormalMaterial();
                     let mesh = new THREE.Mesh(geo, material);
@@ -98,7 +118,7 @@ define(["require", "exports", "three"], function (require, exports, THREE) {
                     this.scene.add(mesh);
                     break;
                 default:
-                    console.log(' ');
+                    //console.log(' ');
                     break;
             }
         }

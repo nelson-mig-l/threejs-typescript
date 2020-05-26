@@ -73,32 +73,46 @@ const XSIZE = mapx[0].length * VERTICAL_UNIT;
 export class Map {
 
     private scene: THREE.Scene;
-    private map: string[] = mapx;
+    private map: string[]; // = mapx;
 
     constructor(scene: THREE.Scene) {
         this.scene = scene;
 
-
-
-
-        let rows: number = this.map.length;
-        let cols: number = this.map[0].length;
-        for (let i = 0; i < rows; i++) {
-            for (let j = 0; j < cols; j++) {
-                this.voxel(this.map[i].charAt(j), i, j);
+        // https://threejs.org/docs/#api/en/loaders/FileLoader
+        var loader = new THREE.FileLoader();
+        var scope = this;
+        loader.load(
+            'dist/maps/pacman.txt',
+            function ( data: string ) {
+                console.log( data )
+                scope.map =  data.split("\r\n");
+                let rows: number = scope.map.length;
+                let cols: number = scope.map[0].length;
+                for (let i = 0; i < rows; i++) {
+                    console.log(scope.map[i]);
+                    for (let j = 0; j < cols; j++) {
+                        scope.voxel(scope.map[i].charAt(j), i, j);
+                    }
+                }
+            },
+            function ( xhr ) {
+                console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+            },
+            function ( err ) {
+                console.error( 'An error happened' );
             }
-        }
+        );
     }
 
-    voxel(type: string, row: number, col: number) {
+    public voxel(type: string, row: number, col: number) {
         let z: number = (row + 1) * HORIZONTAL_UNIT - ZSIZE * 0.5;
         let x: number = (col + 1) * HORIZONTAL_UNIT - XSIZE * 0.5;
         switch(type) {
             case 'S':
-                console.log('s');
+                //console.log('s');
                 break;
             case 'X':
-                console.log('x');
+                //console.log('x');
                 let geo = new THREE.BoxGeometry(HORIZONTAL_UNIT, VERTICAL_UNIT, HORIZONTAL_UNIT);
                 let material = new THREE.MeshNormalMaterial()
                 let mesh = new THREE.Mesh(geo, material);
@@ -106,7 +120,7 @@ export class Map {
                 this.scene.add(mesh);
                 break;
             default: 
-                console.log(' ');
+                //console.log(' ');
                 break;
             
         }
